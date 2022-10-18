@@ -7,7 +7,7 @@ plugins {
 group = "com.justai.jaicf"
 version = "1.0.0"
 
-val jaicf = "1.2.2"
+val jaicf = "1.2.4"
 val logback = "1.2.3"
 
 // Main class to run application on heroku. Either JaicpPollerKt, or JaicpServerKt. Will propagate to .jar main class.
@@ -19,7 +19,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven("https://jitpack.io")
+    maven(uri("https://jitpack.io"))
 }
 
 dependencies {
@@ -30,6 +30,7 @@ dependencies {
     implementation("com.just-ai.jaicf:core:$jaicf")
     implementation("com.just-ai.jaicf:jaicp:$jaicf")
     implementation("com.just-ai.jaicf:caila:$jaicf")
+    implementation("com.just-ai.jaicf:telegram:$jaicf")
 }
 
 tasks {

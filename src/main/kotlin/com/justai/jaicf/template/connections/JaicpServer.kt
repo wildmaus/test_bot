@@ -5,11 +5,11 @@ import com.justai.jaicf.channel.jaicp.channels.ChatApiChannel
 import com.justai.jaicf.channel.jaicp.channels.ChatWidgetChannel
 import com.justai.jaicf.channel.jaicp.channels.TelephonyChannel
 import com.justai.jaicf.template.accessToken
-import com.justai.jaicf.template.templateBot
+import com.justai.jaicf.template.testBot
 
 fun main() {
     JaicpServer(
-        botApi = templateBot,
+        botApi = testBot,
         accessToken = accessToken,
         channels = listOf(
             ChatApiChannel,

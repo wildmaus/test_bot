@@ -1,9 +1,13 @@
 package com.justai.jaicf.template.scenario
 
-import com.justai.jaicf.activator.caila.caila
 import com.justai.jaicf.builder.Scenario
+import com.justai.jaicf.reactions.buttons
+import com.justai.jaicf.reactions.toState
 
-val mainScenario = Scenario {
+val MainScenario = Scenario {
+
+    append(context = "test", TestScenario)
+
     state("start") {
         activators {
             regex("/start")
@@ -11,48 +15,83 @@ val mainScenario = Scenario {
         }
         action {
             reactions.run {
-                image("https://media.giphy.com/media/ICOgUNjpvO0PC/source.gif")
-                sayRandom(
-                    "Hello! How can I help?",
-                    "Hi there! How can I help you?"
+//                image()
+                say(
+                    "Hi! How can I help you?"
                 )
-                buttons(
-                    "Help me!",
-                    "How are you?",
-                    "What is your name?"
-                )
+                go("/choose")
             }
         }
     }
 
-    state("bye") {
+    state("choose", modal = true) {
+        action {
+            reactions.run {
+                buttons(
+                    "My stats" toState "/myStats",
+                    "Test" toState "/test/test",
+                    "Top 5" toState "/top5",
+                    "Joke" toState "/joke"
+                )
+            }
+        }
+
+        state("ClickButtons") {
+            activators {
+                catchAll()
+            }
+
+            action {
+                reactions.run {
+                    say("Please click the button")
+                    go("..")
+                }
+            }
+        }
+    }
+
+    state("myStats") {
         activators {
-            intent("Bye")
+            regex("/myStats")
         }
 
         action {
-            reactions.sayRandom(
-                "See you soon!",
-                "Bye-bye!"
-            )
-            reactions.image("https://media.giphy.com/media/EE185t7OeMbTy/source.gif")
+            reactions.run {
+                say(
+                    "You're awesome!"
+                )
+                go("/choose")
+            }
         }
     }
 
-    state("smalltalk", noContext = true) {
+    state("top5") {
         activators {
-            anyIntent()
+            regex("/top5")
         }
 
-        action(caila) {
-            activator.topIntent.answer?.let { reactions.say(it) } ?: reactions.go("/fallback")
+        action {
+            reactions.run {
+                say(
+                    "You're 1 and that's all"
+                )
+                go("/choose")
+            }
         }
     }
 
-    fallback {
-        reactions.sayRandom(
-            "Sorry, I didn't get that...",
-            "Sorry, could you repeat please?"
-        )
+    state("joke") {
+        activators {
+            regex("/joke")
+        }
+
+        action {
+            reactions.run {
+                sayRandom(
+                    "1st joke", "2nd joke", "more jokes"
+                )
+                go("/choose")
+            }
+        }
     }
 }
