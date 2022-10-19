@@ -1,6 +1,7 @@
 plugins {
     application
     kotlin("jvm") version "1.4.21"
+    kotlin("plugin.serialization") version "1.4.21"
     id("com.justai.jaicf.jaicp-build-plugin") version "0.1.1"
 }
 
@@ -31,6 +32,7 @@ dependencies {
     implementation("com.just-ai.jaicf:jaicp:$jaicf")
     implementation("com.just-ai.jaicf:caila:$jaicf")
     implementation("com.just-ai.jaicf:telegram:$jaicf")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 }
 
 tasks {

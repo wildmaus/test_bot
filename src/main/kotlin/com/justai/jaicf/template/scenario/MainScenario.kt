@@ -1,6 +1,7 @@
 package com.justai.jaicf.template.scenario
 
 import com.justai.jaicf.builder.Scenario
+import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.reactions.buttons
 import com.justai.jaicf.reactions.toState
 
@@ -14,10 +15,15 @@ val MainScenario = Scenario {
             intent("Hello")
         }
         action {
+            var name = context.client["name"]
+            if (name == null) {
+                request.telegram?.run {
+                    name = message.chat.username
+                }
+            }
             reactions.run {
-//                image()
                 say(
-                    "Hi! How can I help you?"
+                    "Hi $name! How can I help you?"
                 )
                 go("/choose")
             }
