@@ -1,4 +1,4 @@
-package com.justai.jaicf.template
+package com.justai.jaicf.template.models
 
 data class Question(val question: String, val options: List<String>, val answer: String)
 

@@ -12,6 +12,7 @@ val TestScenario = Scenario {
     state("test") {
         activators {
             regex("/test")
+            intent("test")
         }
         action {
             reactions.run {
@@ -47,7 +48,7 @@ val TestScenario = Scenario {
             action {
                 val testController = TestController(context)
                 if (testController.getAnswer() == request.input) testController.addScore()
-                if (testController.getQuestionNumber() < 5) {
+                if (testController.getQuestionNumber() < 19) {
                     testController.nextQuestion()
                     reactions.go("..")
                 } else {

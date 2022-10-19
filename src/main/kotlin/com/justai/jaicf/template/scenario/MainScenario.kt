@@ -5,7 +5,7 @@ import com.justai.jaicf.builder.Scenario
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.reactions.buttons
 import com.justai.jaicf.reactions.toState
-import com.justai.jaicf.template.top5
+import com.justai.jaicf.template.models.top5
 
 val MainScenario = Scenario {
 
@@ -24,9 +24,11 @@ val MainScenario = Scenario {
                     context.client["name"] = name
                 }
             }
-            reactions.run {
+            reactions.telegram?.run {
+                image("https://ih1.redbubble.net/image.1581044512.7912/st,small,507x507-pad,600x600,f8f8f8.jpg")
                 say(
-                    "Hi $name! How can I help you?"
+                    "Hi *$name!* I'm simple bot for testing your _knowledge of Kotlin_. How can I help you?",
+                    parseMode = ParseMode.MARKDOWN
                 )
                 go("/choose")
             }
@@ -34,6 +36,9 @@ val MainScenario = Scenario {
     }
 
     state("choose", modal = true) {
+        activators {
+            intent("choose")
+        }
         action {
             reactions.run {
                 buttons(
@@ -57,11 +62,26 @@ val MainScenario = Scenario {
                 }
             }
         }
+
+        state("bye") {
+            activators {
+                regex("/end")
+                intent("Bye")
+            }
+            action {
+                reactions.sayRandom(
+                    "See you soon!",
+                    "Bye-bye!"
+                )
+                reactions.image("https://i.pinimg.com/originals/08/e9/1c/08e91c41f605afe38c114149c690fee2.gif")
+            }
+        }
     }
 
     state("myStats") {
         activators {
             regex("/myStats")
+            intent("stats")
         }
 
         action {
@@ -69,10 +89,10 @@ val MainScenario = Scenario {
                 if (context.client["results"] == null) {
                     say("You didn't pass the test yet")
                 } else {
-                    var result = context.client["results"] as MutableList<Int>
+                    val result = context.client["results"] as MutableList<Int>
                     result.sortDescending()
                     val end = if (result.size > 5) 4 else result.size - 1
-                    var msg: String = "Best results:\n"
+                    var msg = "Best results:\n"
                     for (i in 0..end) {
                         msg += "${i + 1}. Score: _${result[i]}_\n"
                     }
@@ -89,6 +109,7 @@ val MainScenario = Scenario {
     state("top5") {
         activators {
             regex("/top5")
+            intent("top")
         }
 
         action {
@@ -113,12 +134,15 @@ val MainScenario = Scenario {
     state("joke") {
         activators {
             regex("/joke")
+            intent("joke")
         }
 
         action {
             reactions.run {
                 sayRandom(
-                    "1st joke", "2nd joke", "more jokes"
+                    "How many programmers does it take to change a light bulb?\nNone – It’s a hardware problem.",
+                    "There are only 10 kinds of people in this world: those who know binary and those who don’t",
+                    "Programmer is a machine that turns coffee into code."
                 )
                 go("/choose")
             }

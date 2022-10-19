@@ -1,6 +1,9 @@
 package com.justai.jaicf.template
 
 import com.justai.jaicf.context.BotContext
+import com.justai.jaicf.template.models.Top
+import com.justai.jaicf.template.models.questions
+import com.justai.jaicf.template.models.top5
 
 class TestController(context: BotContext) {
     private var totalScore: Int? by context.client
@@ -45,7 +48,7 @@ class TestController(context: BotContext) {
             topLvl = lvl
         } else {
             results!!.sortDescending()
-            if (totalScore ?: 0 > results!![0]) {
+            if ((totalScore ?: 0) > results!![0]) {
                 topLvl = lvl
             }
             results!!.add(totalScore ?: 0)
