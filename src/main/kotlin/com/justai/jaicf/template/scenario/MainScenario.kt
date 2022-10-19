@@ -1,9 +1,11 @@
 package com.justai.jaicf.template.scenario
 
+import com.github.kotlintelegrambot.entities.ParseMode
 import com.justai.jaicf.builder.Scenario
 import com.justai.jaicf.channel.telegram.telegram
 import com.justai.jaicf.reactions.buttons
 import com.justai.jaicf.reactions.toState
+import com.justai.jaicf.template.top5
 
 val MainScenario = Scenario {
 
@@ -18,7 +20,8 @@ val MainScenario = Scenario {
             var name = context.client["name"]
             if (name == null) {
                 request.telegram?.run {
-                    name = message.chat.username
+                    name = message.chat.firstName ?: message.chat.username
+                    context.client["name"] = name
                 }
             }
             reactions.run {
@@ -63,9 +66,21 @@ val MainScenario = Scenario {
 
         action {
             reactions.run {
-                say(
-                    "You're awesome!"
-                )
+                if (context.client["results"] == null) {
+                    say("You didn't pass the test yet")
+                } else {
+                    var result = context.client["results"] as MutableList<Int>
+                    result.sortDescending()
+                    val end = if (result.size > 5) 4 else result.size - 1
+                    var msg: String = "Best results:\n"
+                    for (i in 0..end) {
+                        msg += "${i + 1}. Score: _${result[i]}_\n"
+                    }
+                    telegram?.say(
+                        "Your level is *${context.client["topLvl"]}*\n" + msg,
+                        parseMode = ParseMode.MARKDOWN
+                    )
+                }
                 go("/choose")
             }
         }
@@ -77,9 +92,18 @@ val MainScenario = Scenario {
         }
 
         action {
-            reactions.run {
+            reactions.telegram?.run {
+                var msg = "Top 5 users:\n"
+                var i = 1
+                for (item in top5) {
+                    msg += "${i++}. ${item.username}, Score: _${item.score}_\n"
+                }
+                for (i in top5.size..4) {
+                    msg += "${i + 1}.\n"
+                }
                 say(
-                    "You're 1 and that's all"
+                    msg,
+                    parseMode = ParseMode.MARKDOWN
                 )
                 go("/choose")
             }

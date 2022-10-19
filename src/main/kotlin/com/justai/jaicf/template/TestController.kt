@@ -5,22 +5,28 @@ import com.justai.jaicf.context.BotContext
 class TestController(context: BotContext) {
     private var totalScore: Int? by context.client
     private var currentQuestion: Int? by context.client
-    private var question: Question by context.session
+    private var results: MutableList<Int>? by context.client
+    private var topLvl: String? by context.client
+    private var name: String? by context.client
 
     fun getQuestionNumber(): Int {
-        return currentQuestion ?: 1
+        return currentQuestion ?: 0
     }
 
     fun getTotalScore(): Int {
         return totalScore ?: 0
     }
 
-    fun getOptions(): List<String> {
-        return question.options.shuffled()
+    fun getQuestion(): String {
+        return questions[currentQuestion ?: 0].question
+    }
+
+    fun getOption(index: Int): String {
+        return questions[currentQuestion ?: 0].options[index]
     }
 
     fun getAnswer(): String {
-        return question.options[question.answer]
+        return questions[currentQuestion ?: 0].answer
     }
 
     fun addScore() {
@@ -29,18 +35,31 @@ class TestController(context: BotContext) {
     }
 
     fun nextQuestion() {
-        val num = currentQuestion ?: 1
+        val num = currentQuestion ?: 0
         currentQuestion = num + 1
-        updateQuestion()
     }
+
+    fun storeResult(lvl: String) {
+        if (results == null) {
+            results = mutableListOf(totalScore ?: 0)
+            topLvl = lvl
+        } else {
+            results!!.sortDescending()
+            if (totalScore ?: 0 > results!![0]) {
+                topLvl = lvl
+            }
+            results!!.add(totalScore ?: 0)
+        }
+        top5.add(Top(name ?: "username", totalScore ?: 0))
+        top5.sortByDescending { it.score }
+        if (top5.size > 5) {
+            top5 = top5.dropLast(top5.size - 5).toMutableList()
+        }
+    }
+
 
     fun restart() {
         totalScore = 0
-        currentQuestion = 1
-        updateQuestion()
-    }
-
-    private fun updateQuestion() {
-        question = Question(currentQuestion ?: 1, 0, listOf("option1", "option2", "option3", "option4"))
+        currentQuestion = 0
     }
 }
